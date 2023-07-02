@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# dataset
+DAVIS2SEG/
+MoCA_Flow/
+
+# output
+output_path/

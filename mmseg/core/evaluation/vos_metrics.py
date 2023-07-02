@@ -9,7 +9,7 @@ from .metrics import eval_metrics, total_intersect_and_union, f_score
 from skimage.morphology import binary_dilation, disk
 
 import warnings
-from joblib import delayed, Parallel
+# from joblib import delayed, Parallel
 
 
 def vos_eval_metrics(results,
@@ -45,6 +45,7 @@ def vos_eval_metrics(results,
                                             reduce_zero_label,
                                             beta))
         elif set([metric]).issubset(set(my_metrics)):
+            pass
             # total_area_intersect, total_area_union, total_area_pred_label, \
             # total_area_label = total_intersect_and_union(
             #     results, gt_seg_maps, num_classes, ignore_index, label_map,
@@ -52,31 +53,31 @@ def vos_eval_metrics(results,
             #
             # all_acc = total_area_intersect.sum() / total_area_label.sum()
             # ret_metrics.update(OrderedDict({'aAcc': all_acc}))
-            num_imgs = len(results)
-            assert len(gt_seg_maps) == num_imgs
-            frame_score_list = Parallel(n_jobs=40)(
-                delayed(_read_and_eval_file)(
-                    frame_mask=gt_seg_maps[i], frame_pred=results[i]
-                )
-                for i in range(num_imgs)
-            )
-
-            # frame_score_list = [_read_and_eval_file(
-            #     frame_mask=gt_seg_maps[i], frame_pred=results[i])
+            # num_imgs = len(results)
+            # assert len(gt_seg_maps) == num_imgs
+            # frame_score_list = Parallel(n_jobs=40)(
+            #     delayed(_read_and_eval_file)(
+            #         frame_mask=gt_seg_maps[i], frame_pred=results[i]
+            #     )
             #     for i in range(num_imgs)
-            # ]
-            frame_score_array = np.asarray(frame_score_list)
-            M, O = zip(
-                *[
-                    get_mean_recall_decay_for_video(frame_score_array[:, i])
-                    for i in range(frame_score_array.shape[1])
-                ]
-            )
-            if metric == 'VOS':
-                ret_metrics['JM'] = M[0]
-                ret_metrics['JO'] = O[0]
-                ret_metrics['FM'] = M[1]
-                ret_metrics['FO'] = O[1]
+            # )
+
+            # # frame_score_list = [_read_and_eval_file(
+            # #     frame_mask=gt_seg_maps[i], frame_pred=results[i])
+            # #     for i in range(num_imgs)
+            # # ]
+            # frame_score_array = np.asarray(frame_score_list)
+            # M, O = zip(
+            #     *[
+            #         get_mean_recall_decay_for_video(frame_score_array[:, i])
+            #         for i in range(frame_score_array.shape[1])
+            #     ]
+            # )
+            # if metric == 'VOS':
+            #     ret_metrics['JM'] = M[0]
+            #     ret_metrics['JO'] = O[0]
+            #     ret_metrics['FM'] = M[1]
+            #     ret_metrics['FO'] = O[1]
 
     for metric, value in ret_metrics.copy().items():
         if isinstance(value, Tensor):

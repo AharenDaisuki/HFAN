@@ -1,7 +1,7 @@
 import numpy as np
 import os.path as osp
 
-from joblib import delayed, Parallel
+# from joblib import delayed, Parallel
 
 import mmcv
 import torch
@@ -51,13 +51,14 @@ def fast_single_gpu_test_mp(model,
             result = model(return_loss=False, **data)
         batch_size = len(result)
         if out_dir:
-            img_metas = data['img_metas'][0].data[0]
-            Parallel(n_jobs=batch_size)(
-                delayed(_test_module)(
-                    img_meta, out_dir, result, index, dataset
-                )
-                for index, img_meta in enumerate(img_metas)
-            )
+            pass
+            # img_metas = data['img_metas'][0].data[0]
+            # Parallel(n_jobs=batch_size)(
+            #     delayed(_test_module)(
+            #         img_meta, out_dir, result, index, dataset
+            #     )
+            #     for index, img_meta in enumerate(img_metas)
+            # )
 
         for _ in range(batch_size):
             prog_bar.update()
